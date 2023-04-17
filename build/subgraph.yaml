@@ -1,0 +1,76 @@
+specVersion: 0.0.5
+schema:
+  file: schema.graphql
+dataSources:
+  - kind: ethereum
+    name: PodFactory
+    network: mumbai
+    source:
+      address: "0x5b7ff978732CD3D53c5e65c2eeD824b4C58C5285"
+      abi: PodFactory
+      startBlock: 34353671
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Pod
+        - Credential
+      abis:
+        - name: PodFactory
+          file: PodFactory/abis/PodFactory.json
+        - name: Pod
+          file: PodFactory/abis/Pod.json
+        - name: DiamondCutFacet
+          file: PodFactory/abis/DiamondCutFacet.json
+      eventHandlers:
+        - event: PodDeployed(indexed address)
+          handler: handlePodDeployed
+      file: PodFactory/PodFactory.wasm
+templates:
+  - kind: ethereum/contract
+    name: Pod
+    network: mumbai
+    source:
+      abi: Pod
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      file: PodFactory/PodFactory.wasm
+      entities:
+        - Pod
+        - Credential
+      abis:
+        - name: PodFactory
+          file: Pod/abis/PodFactory.json
+        - name: Pod
+          file: Pod/abis/Pod.json
+        - name: DiamondCutFacet
+          file: Pod/abis/DiamondCutFacet.json
+      eventHandlers:
+        - event: CredentialDeployed(address)
+          handler: handleCredentialDeployed
+  - kind: ethereum/contract
+    name: DiamondCutFacet
+    network: mumbai
+    source:
+      abi: DiamondCutFacet
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      file: PodFactory/PodFactory.wasm
+      entities:
+        - Pod
+        - Credential
+      abis:
+        - name: PodFactory
+          file: DiamondCutFacet/abis/PodFactory.json
+        - name: Pod
+          file: DiamondCutFacet/abis/Pod.json
+        - name: DiamondCutFacet
+          file: DiamondCutFacet/abis/DiamondCutFacet.json
+      eventHandlers:
+        - event: DiamondCut((address,uint8,bytes4[])[],address,bytes)
+          handler: handleDiamondCut
