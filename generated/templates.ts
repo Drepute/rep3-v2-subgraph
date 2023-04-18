@@ -6,16 +6,6 @@ import {
   DataSourceContext
 } from "@graphprotocol/graph-ts";
 
-export class Pod extends DataSourceTemplate {
-  static create(address: Address): void {
-    DataSourceTemplate.create("Pod", [address.toHex()]);
-  }
-
-  static createWithContext(address: Address, context: DataSourceContext): void {
-    DataSourceTemplate.createWithContext("Pod", [address.toHex()], context);
-  }
-}
-
 export class DiamondCutFacet extends DataSourceTemplate {
   static create(address: Address): void {
     DataSourceTemplate.create("DiamondCutFacet", [address.toHex()]);
@@ -27,5 +17,15 @@ export class DiamondCutFacet extends DataSourceTemplate {
       [address.toHex()],
       context
     );
+  }
+}
+
+export class Pod extends DataSourceTemplate {
+  static create(address: Address): void {
+    DataSourceTemplate.create("Pod", [address.toHex()]);
+  }
+
+  static createWithContext(address: Address, context: DataSourceContext): void {
+    DataSourceTemplate.createWithContext("Pod", [address.toHex()], context);
   }
 }

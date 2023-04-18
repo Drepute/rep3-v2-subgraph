@@ -1,8 +1,8 @@
-specVersion: 0.0.5
+specVersion: 0.0.4
 schema:
   file: schema.graphql
 dataSources:
-  - kind: ethereum
+  - kind: ethereum/contract
     name: PodFactory
     network: mumbai
     source:
@@ -19,38 +19,11 @@ dataSources:
       abis:
         - name: PodFactory
           file: PodFactory/abis/PodFactory.json
-        - name: Pod
-          file: PodFactory/abis/Pod.json
-        - name: DiamondCutFacet
-          file: PodFactory/abis/DiamondCutFacet.json
       eventHandlers:
         - event: PodDeployed(indexed address)
           handler: handlePodDeployed
       file: PodFactory/PodFactory.wasm
 templates:
-  - kind: ethereum/contract
-    name: Pod
-    network: mumbai
-    source:
-      abi: Pod
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.7
-      language: wasm/assemblyscript
-      file: PodFactory/PodFactory.wasm
-      entities:
-        - Pod
-        - Credential
-      abis:
-        - name: PodFactory
-          file: Pod/abis/PodFactory.json
-        - name: Pod
-          file: Pod/abis/Pod.json
-        - name: DiamondCutFacet
-          file: Pod/abis/DiamondCutFacet.json
-      eventHandlers:
-        - event: CredentialDeployed(address)
-          handler: handleCredentialDeployed
   - kind: ethereum/contract
     name: DiamondCutFacet
     network: mumbai
@@ -60,17 +33,30 @@ templates:
       kind: ethereum/events
       apiVersion: 0.0.7
       language: wasm/assemblyscript
-      file: PodFactory/PodFactory.wasm
+      file: templates/DiamondCutFacet/DiamondCutFacet.wasm
       entities:
-        - Pod
         - Credential
       abis:
-        - name: PodFactory
-          file: DiamondCutFacet/abis/PodFactory.json
-        - name: Pod
-          file: DiamondCutFacet/abis/Pod.json
         - name: DiamondCutFacet
           file: DiamondCutFacet/abis/DiamondCutFacet.json
-      eventHandlers:
-        - event: DiamondCut((address,uint8,bytes4[])[],address,bytes)
+      callHandlers:
+        - function: DiamondCut((address,uint8,bytes4[])[],address,bytes)
           handler: handleDiamondCut
+  - name: Pod
+    kind: ethereum/contract
+    network: mumbai
+    source:
+      abi: Pod
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      file: templates/Pod/Pod.wasm
+      entities:
+        - Credential
+      abis:
+        - name: Pod
+          file: Pod/abis/Pod.json
+      callHandlers:
+        - function: CredentialDeployed(address)
+          handler: handleCredentialDeployed

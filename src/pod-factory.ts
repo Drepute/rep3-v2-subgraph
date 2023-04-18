@@ -3,7 +3,7 @@ import { PodDeployed } from "../generated/PodFactory/PodFactory";
 import { CredentialDeployed } from "../generated/templates/Pod/Pod";
 // import { DiamondCut } from "../generated/templates/DiamondCutFacet/DiamondCutFacet";
 import { Credential, Pod } from "../generated/schema";
-import { DiamondCutFacet, Pod as PodTemplate } from "../generated/templates";
+import { Pod as PodTemplate } from "../generated/templates";
 // import { ExampleEntity } from "../generated/schema";
 
 // export function handleInitialized(event: Initialized): void {
@@ -62,17 +62,17 @@ export function handlePodDeployed(event: PodDeployed): void {
   }
 }
 
-export function handleCredentialDeployed(event: CredentialDeployed): void {
-  let credentials = Credential.load(event.params.credential);
-    if (!credentials) {
-      let credentials = new Credential(event.params.credential);
-      credentials.parentPod = event.address;
-      credentials.facets = [];
-      DiamondCutFacet.create(event.address);
-      credentials.save();
-    }
+// export function handleCredentialDeployed(event: CredentialDeployed): void {
+//   let credentials = Credential.load(event.params.credential);
+//     if (!credentials) {
+//       let credentials = new Credential(event.params.credential);
+//       credentials.parentPod = event.address;
+//       credentials.facets = [];
+//       // DiamondCutFacet.create(event.address);
+//       credentials.save();
+//     }
     
-}
+// }
 
 // export function handleDiamondCut(event: DiamondCut): void {
 //   let credentials = Credential.load(event.address);
