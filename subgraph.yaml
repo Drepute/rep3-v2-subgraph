@@ -14,17 +14,53 @@ dataSources:
       apiVersion: 0.0.7
       language: wasm/assemblyscript
       entities:
-        - Initialized
-        - OwnershipTransferred
-        - PodDeployed
+        - Pod
+        - Credential
       abis:
         - name: PodFactory
           file: ./abis/PodFactory.json
       eventHandlers:
-        - event: Initialized(uint8)
-          handler: handleInitialized
-        - event: OwnershipTransferred(indexed address,indexed address)
-          handler: handleOwnershipTransferred
+        # - event: Initialized(uint8)
+        #   handler: handleInitialized
+        # - event: OwnershipTransferred(indexed address,indexed address)
+        #   handler: handleOwnershipTransferred
         - event: PodDeployed(indexed address)
           handler: handlePodDeployed
       file: ./src/pod-factory.ts
+templates:
+  - name: Pod
+    kind: ethereum/contract
+    network: mumbai
+    source:
+      abi: Pod
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      file: ./src/pod-factory.ts
+      entities:
+        - Credential
+      abis:
+        - name: Pod
+          file: ./abis/Pod.json
+      callHandlers:
+        - function: CredentialDeployed(address)
+          handler: handleCredentialDeployed
+  - name: DiamondCutFacet
+    kind: ethereum/contract
+    network: mumbai
+    source:
+      abi: DiamondCutFacet
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      file: ./src/pod-factory.ts
+      entities:
+        - Credential
+      abis:
+        - name: DiamondCutFacet
+          file: ./abis/DiamondCutFacet.json
+      callHandlers:
+        - function: DiamondCut((address,uint8,bytes4[])[],address,bytes)
+          handler: handleDiamondCut

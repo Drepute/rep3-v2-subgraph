@@ -1,5 +1,13 @@
-type ExampleEntity @entity {
+type Pod @entity {
   id: Bytes!
-  count: BigInt!
-  version: Int! # uint8
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+  credentials: [Credential!]! @derivedFrom(field: "parentPod")
+}
+
+type Credential @entity {
+  id: Bytes!
+  parentPod: Pod!
+  facets: [Bytes!]!
 }
