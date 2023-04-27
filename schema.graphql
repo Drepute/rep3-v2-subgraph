@@ -11,3 +11,14 @@ type Credential @entity {
   parentPod: Pod!
   facets: [Bytes!]!
 }
+
+type TierNFt @entity {
+  id: String!
+  metadataUri: String!
+  tokenId: BigInt!
+  claimer: Bytes!
+  credential: Credential!
+  blockTimestamp: BigInt!
+  tier: Int!
+  txHash: Bytes!
+}

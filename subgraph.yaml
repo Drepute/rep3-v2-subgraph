@@ -6,9 +6,9 @@ dataSources:
     name: PodFactory
     network: mumbai
     source:
-      address: "0x5b7ff978732CD3D53c5e65c2eeD824b4C58C5285"
+      address: "0xa9F5a153C4076BFf94bcCFe870a511576eCa584d"
       abi: PodFactory
-      startBlock: 34353671
+      startBlock: 34615318
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -19,11 +19,9 @@ dataSources:
       abis:
         - name: PodFactory
           file: ./abis/PodFactory.json
+        - name: DiamondLoupeFacet
+          file: ./abis/DiamondLoupeFacet.json
       eventHandlers:
-        # - event: Initialized(uint8)
-        #   handler: handleInitialized
-        # - event: OwnershipTransferred(indexed address,indexed address)
-        #   handler: handleOwnershipTransferred
         - event: PodDeployed(indexed address)
           handler: handlePodDeployed
       file: ./src/pod-factory.ts
@@ -43,14 +41,18 @@ templates:
       abis:
         - name: Pod
           file: ./abis/Pod.json
-      callHandlers:
-        - function: CredentialDeployed(address)
+        - name: DiamondLoupeFacet
+          file: ./abis/DiamondLoupeFacet.json
+        - name: TierMintFacet
+          file: ./abis/TierMintFacet.json
+      eventHandlers:
+        - event: CredentialDeployed(address)
           handler: handleCredentialDeployed
-  - name: DiamondCutFacet
+  - name: DiamondLoupeFacet
     kind: ethereum/contract
     network: mumbai
     source:
-      abi: DiamondCutFacet
+      abi: DiamondLoupeFacet
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -59,8 +61,28 @@ templates:
       entities:
         - Credential
       abis:
-        - name: DiamondCutFacet
-          file: ./abis/DiamondCutFacet.json
-      callHandlers:
-        - function: DiamondCut((address,uint8,bytes4[])[],address,bytes)
-          handler: handleDiamondCut
+        - name: DiamondLoupeFacet
+          file: ./abis/DiamondLoupeFacet.json
+      # eventHandlers:
+      #   - event: DiamondCut((address,uint8,bytes4[])[],address,bytes)
+      #     handler: handleDiamondCut
+  - name: TierMintFacet
+    kind: ethereum/contract
+    network: mumbai
+    source:
+      abi: TierMintFacet
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      file: ./src/pod-factory.ts
+      entities:
+        - Credential
+      abis:
+        - name: TierMintFacet
+          file: ./abis/TierMintFacet.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,indexed uint256)
+          handler: handleTierMintTransfer
+        - event: TierMint(indexed uint256,indexed uint8)
+          handler: handleTierMint
