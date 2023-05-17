@@ -14,6 +14,8 @@ import {
   TierMintFacet as TierMintContract,
 } from "../generated/templates/TierMintFacet/TierMintFacet";
 
+
+
 export function handlePodDeployed(event: PodDeployed): void {
   let pod = Pod.load(event.params.proxy);
   if (!pod) {
@@ -45,7 +47,7 @@ export function handleCredentialDeployed(event: CredentialDeployed): void {
 
 export function handleTierMintTransfer(event: Transfer): void {
   let tierMintFacet = TierMintContract.bind(event.address);
-  let tierNft = TierNFt.load(`${event.transaction.hash}${event.params.id}`);
+  let tierNft = TierNFt.load(`${event.transaction.hash.toHexString()}${event.params.id.toString()}`);
   if (!tierNft) {
     tierNft = new TierNFt(`${event.transaction.hash}${event.params.id}`);
     tierNft.claimer = event.params.to;
