@@ -1,8 +1,8 @@
-// import { BigInt } from "@graphprotocol/graph-ts";
-// import { Address, Bytes } from "@graphprotocol/graph-ts";
 import { BadgeDeployed } from "../generated/BadgeFactory/BadgeFactory";
+import { Transfer, Badge } from "../generated/templates/Badge/Badge";
 import { Badge as BadgeTemplate } from "../generated/templates";
-import { Community } from "../generated/schema";
+import { Community, QuestBadge } from "../generated/schema";
+import { BigInt } from "@graphprotocol/graph-ts";
 
 export function handleBadgeDeployed(event: BadgeDeployed): void {
   let community = Community.load(event.params.proxy);
@@ -15,79 +15,37 @@ export function handleBadgeDeployed(event: BadgeDeployed): void {
     community.save();
   }
 }
-
-// export function handleCredentialDeployed(event: CredentialDeployed): void {
-//   let credentials = Credential.load(event.params.credential);
-//   if (!credentials) {
-//     let credentials = new Credential(event.params.credential);
-//     credentials.parentPod = event.address;
-
-//     // create data source
-//     TierMintTemplate.create(event.params.credential);
-
-//     const diamondLoupeFacet = DiamondLoupeFacet.bind(event.params.credential);
-//     credentials.facets = diamondLoupeFacet
-//       .facetAddresses()
-//       .map<Bytes>((x: Bytes) => x);
-//     credentials.save();
-//   }
-// }
-
-// export function handleTierMintTransfer(event: Transfer): void {
-//   let tierMintFacet = TierMintContract.bind(event.address);
-//   let tierNft = TierNFt.load(
-//     `${event.transaction.hash.toHexString()}${event.params.id.toString()}`
-//   );
-//   if (!tierNft) {
-//     tierNft = new TierNFt(`${event.transaction.hash}${event.params.id}`);
-//     tierNft.claimer = event.params.to;
-//     tierNft.blockTimestamp = event.block.timestamp;
-//     tierNft.credential = event.address;
-//     let tierDataResult = tierMintFacet.try_getTokenUri(event.params.id);
-//     if (tierDataResult.reverted) {
-//       tierNft.metadataUri = "";
-//     } else {
-//       tierNft.metadataUri = tierMintFacet.getTokenUri(event.params.id);
-//     }
-//     let metaDataResult = tierMintFacet.try_getTierOfToken(event.params.id);
-//     if (metaDataResult.reverted) {
-//       tierNft.tier = 0;
-//     } else {
-//       tierNft.tier = tierMintFacet.getTierOfToken(event.params.id);
-//     }
-//     tierNft.tokenId = event.params.id;
-//     tierNft.txHash = event.transaction.hash;
-//     tierNft.save();
-//   }
-// }
-
-// export function handleTierMint(event: TierMint): void {
-//   let tierNft = TierNFt.load(`${event.transaction.hash}${event.params.tokenId}`);
-//   if(!tierNft){
-//     tierNft = new TierNFt(`${event.transaction.hash}${event.params.tokenId}`);
-//     tierNft.claimer = Address.fromI32(0);
-//     tierNft.blockTimestamp = event.block.timestamp;
-//     tierNft.credential = event.address;
-//     tierNft.tier = event.params.tier;
-//     tierNft.metadataUri = '';
-//     tierNft.tokenId = event.params.tokenId;
-//     tierNft.txHash = event.transaction.hash;
-//     tierNft.save();
-//   }
-// }
-
-// export function handlet(event: TierMint): void {
-//   let tierNft = TierNFt.load(
-//     `${event.transaction.hash}${event.params.tokenId}`
-//   );
-//   if (!tierNft) {
-//     tierNft = new TierNFt(`${event.transaction.hash}${event.params.tokenId}`);
-//     tierNft.claimer = Address.fromI32(0);
-//     tierNft.blockTimestamp = event.block.timestamp;
-//     tierNft.credential = event.address;
-//     tierNft.tier = event.params.tier;
-//     tierNft.metadataUri = "";
-//     tierNft.tokenId = event.params.tokenId;
-//     tierNft.save();
-//   }
-// }
+export function handleTransfer(event: Transfer): void {
+  let badge = QuestBadge.load(`${event.address}${event.params.id}`);
+  if (!badge) {
+    badge = new QuestBadge(`${event.address}${event.params.id}`);
+    badge.tokenId = event.params.id;
+    badge.claimer = event.params.to;
+    badge.parentCommunity = event.address;
+    badge.blockTimestamp = event.block.timestamp;
+    badge.txHash = event.transaction.hash;
+    const badgeInstance = Badge.bind(event.address);
+    let badgeData = badgeInstance.try_dataOf(event.params.id);
+    if (badgeData.reverted) {
+      badge.data = BigInt.fromI32(0);
+    } else {
+      badge.data = badgeInstance.dataOf(event.params.id);
+    }
+    let badgeTier = badgeInstance.try_tierOf(event.params.id);
+    if (badgeTier.reverted) {
+      badge.tier = 0;
+    } else {
+      badge.tier = badgeInstance.tierOf(event.params.id);
+    }
+    let badgeMetadata = badgeInstance.try_tokenURI(event.params.id);
+    if (badgeMetadata.reverted) {
+      badge.metadataUri = "";
+    } else {
+      badge.metadataUri = badgeInstance.tokenURI(event.params.id);
+    }
+    badge.save();
+  } else {
+    badge.claimer = event.params.to;
+    badge.save();
+  }
+}

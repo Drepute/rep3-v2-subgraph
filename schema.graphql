@@ -3,10 +3,10 @@ type Community @entity {
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!
-  badgeMinted: [Badge!]! @derivedFrom(field: "parentCommunity")
+  badgeMinted: [QuestBadge!]! @derivedFrom(field: "parentCommunity")
 }
 
-type Badge @entity {
+type QuestBadge @entity {
   id: String!
   metadataUri: String!
   tokenId: BigInt!
@@ -14,6 +14,6 @@ type Badge @entity {
   parentCommunity: Community!
   blockTimestamp: BigInt!
   tier: Int!
-  data: Int!
+  data: BigInt!
   txHash: Bytes!
 }
