@@ -44,5 +44,5 @@ templates:
       eventHandlers:
         - event: Transfer(indexed address,indexed address,indexed uint256)
           handler: handleTransfer
-        # - event: BadgeUpdated(uint256,uint8,string,uint256)
-        #   handler: handleBadgeUpdated
+        - event: BadgeUpdated(uint256,uint8,string,uint256)
+          handler: handleBadgeUpdated

@@ -1,5 +1,5 @@
 import { BadgeDeployed } from "../generated/BadgeFactory/BadgeFactory";
-import { Transfer, Badge } from "../generated/templates/Badge/Badge";
+import { Transfer, Badge, BadgeUpdated } from "../generated/templates/Badge/Badge";
 import { Badge as BadgeTemplate } from "../generated/templates";
 import { Community, QuestBadge } from "../generated/schema";
 import { BigInt } from "@graphprotocol/graph-ts";
@@ -47,5 +47,15 @@ export function handleTransfer(event: Transfer): void {
   } else {
     badge.claimer = event.params.to;
     badge.save();
+  }
+}
+
+export function handleBadgeUpdated(event: BadgeUpdated): void {
+  let badge = QuestBadge.load(`${event.address}${event.params.tokenId}`);
+  if (badge) {
+    badge.data = event.params.data;
+    badge.tier = event.params.tier;
+    badge.metadataUri = event.params.metadata
+    badge.save()
   }
 }
