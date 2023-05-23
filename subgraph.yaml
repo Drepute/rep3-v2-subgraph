@@ -3,86 +3,46 @@ schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum
-    name: PodFactory
+    name: BadgeFactory
     network: mumbai
     source:
-      address: "0xa9F5a153C4076BFf94bcCFe870a511576eCa584d"
-      abi: PodFactory
-      startBlock: 34615318
+      address: "0x9d2Be8492d223F5440d56Aa3fCA662C475528ca3"
+      abi: BadgeFactory
+      startBlock: 35660145
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
       language: wasm/assemblyscript
       entities:
-        - Pod
-        - Credential
+        - Community
+        - QuestBadge
       abis:
-        - name: PodFactory
-          file: ./abis/PodFactory.json
-        - name: DiamondLoupeFacet
-          file: ./abis/DiamondLoupeFacet.json
+        - name: BadgeFactory
+          file: ./abis/BadgeFactory.json
+        - name: Badge
+          file: ./abis/Badge.json
       eventHandlers:
-        - event: PodDeployed(indexed address)
-          handler: handlePodDeployed
+        - event: BadgeDeployed(indexed address)
+          handler: handleBadgeDeployed
       file: ./src/pod-factory.ts
 templates:
-  - name: Pod
+  - name: Badge
     kind: ethereum/contract
     network: mumbai
     source:
-      abi: Pod
+      abi: Badge
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
       language: wasm/assemblyscript
       file: ./src/pod-factory.ts
       entities:
-        - Credential
+        - QuestBadge
       abis:
-        - name: Pod
-          file: ./abis/Pod.json
-        - name: DiamondLoupeFacet
-          file: ./abis/DiamondLoupeFacet.json
-        - name: TierMintFacet
-          file: ./abis/TierMintFacet.json
-      eventHandlers:
-        - event: CredentialDeployed(address)
-          handler: handleCredentialDeployed
-  - name: DiamondLoupeFacet
-    kind: ethereum/contract
-    network: mumbai
-    source:
-      abi: DiamondLoupeFacet
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.7
-      language: wasm/assemblyscript
-      file: ./src/pod-factory.ts
-      entities:
-        - Credential
-      abis:
-        - name: DiamondLoupeFacet
-          file: ./abis/DiamondLoupeFacet.json
-      # eventHandlers:
-      #   - event: DiamondCut((address,uint8,bytes4[])[],address,bytes)
-      #     handler: handleDiamondCut
-  - name: TierMintFacet
-    kind: ethereum/contract
-    network: mumbai
-    source:
-      abi: TierMintFacet
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.7
-      language: wasm/assemblyscript
-      file: ./src/pod-factory.ts
-      entities:
-        - Credential
-      abis:
-        - name: TierMintFacet
-          file: ./abis/TierMintFacet.json
+        - name: Badge
+          file: ./abis/Badge.json
       eventHandlers:
         - event: Transfer(indexed address,indexed address,indexed uint256)
-          handler: handleTierMintTransfer
-        - event: TierMint(indexed uint256,indexed uint8)
-          handler: handleTierMint
+          handler: handleTransfer
+        - event: BadgeUpdated(uint256,uint8,string,uint256)
+          handler: handleBadgeUpdated

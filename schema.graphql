@@ -1,24 +1,19 @@
-type Pod @entity {
+type Community @entity {
   id: Bytes!
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!
-  credentials: [Credential!]! @derivedFrom(field: "parentPod")
+  badgeMinted: [QuestBadge!]! @derivedFrom(field: "parentCommunity")
 }
 
-type Credential @entity {
-  id: Bytes!
-  parentPod: Pod!
-  facets: [Bytes!]!
-}
-
-type TierNFt @entity {
+type QuestBadge @entity {
   id: String!
   metadataUri: String!
   tokenId: BigInt!
   claimer: Bytes!
-  credential: Credential!
+  parentCommunity: Community!
   blockTimestamp: BigInt!
   tier: Int!
+  data: BigInt!
   txHash: Bytes!
 }
