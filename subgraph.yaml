@@ -6,9 +6,9 @@ dataSources:
     name: BadgeFactory
     network: mumbai
     source:
-      address: "0x9d2Be8492d223F5440d56Aa3fCA662C475528ca3"
+      address: "0xE732c63525877AAAC950470e0A63DCaa9a3136E9"
       abi: BadgeFactory
-      startBlock: 35660145
+      startBlock: 36148983
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
