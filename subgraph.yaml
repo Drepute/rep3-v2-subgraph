@@ -4,11 +4,11 @@ schema:
 dataSources:
   - kind: ethereum
     name: BadgeFactory
-    network: mumbai
+    network: matic
     source:
-      address: "0xE732c63525877AAAC950470e0A63DCaa9a3136E9"
+      address: "0xd5eea2EAD040e3F9fc778A0F0898bB24681411E1"
       abi: BadgeFactory
-      startBlock: 36148983
+      startBlock: 44599496
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -28,7 +28,7 @@ dataSources:
 templates:
   - name: Badge
     kind: ethereum/contract
-    network: mumbai
+    network: matic
     source:
       abi: Badge
     mapping:

@@ -4,5 +4,11 @@
       "address": "0x3EdCe035B6014E4AC96A602c82f4A1ed4F476FDc",
       "startBlock": 34615318
     }
+  },
+  "matic": {
+    "PodFactory": {
+      "address": "0xd5eea2EAD040e3F9fc778A0F0898bB24681411E1",
+      "startBlock": 44599496
+    }
   }
 }
